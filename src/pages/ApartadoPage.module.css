@@ -1,0 +1,53 @@
+.ticketContainer {
+  min-height: 100vh;
+  background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.ticket {
+  background-color: #fff;
+  color: #000;
+  width: 300px;
+  padding: 16px;
+  border-radius: 6px;
+  font-family: "Courier New", monospace;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
+}
+
+.header {
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.ticket h3 {
+  text-align: center;
+  font-size: 15px;
+  margin: 5px 0;
+}
+
+.ticket p {
+  font-size: 13px;
+  margin: 3px 0;
+}
+
+.item {
+  font-size: 12px;
+  margin: 2px 0;
+}
+
+.total p {
+  font-size: 13px;
+  font-weight: bold;
+  margin: 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px dashed #000;
+  margin: 8px 0;
+}
