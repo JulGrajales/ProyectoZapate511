@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebase';
-
 import styles from '../components/AuthLayout/AuthLayout.module.css';
 
 function LoginPage() {
@@ -15,11 +14,31 @@ function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (!email || !password) {
+      setError('Ingresa tu correo y contraseña.');
+      return;
+    }
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/'); // Redirige al Home
+      navigate('/'); 
     } catch (err) {
-      setError('Error al iniciar sesión. Verifica tus credenciales.');
+      // --- MANEJO DE ERRORES DE LOGIN ---
+      switch (err.code) {
+        case 'auth/user-not-found':
+          setError('No existe una cuenta con este correo.');
+          break;
+        case 'auth/wrong-password':
+          setError('La contraseña es incorrecta.');
+          break;
+        case 'auth/invalid-credential':
+          setError('Credenciales inválidas. Verifica tus datos.');
+          break;
+        default:
+          setError('Error al iniciar sesión. Intenta de nuevo.');
+          break;
+      }
     }
   };
 
@@ -45,13 +64,14 @@ function LoginPage() {
           <button type="submit" className={styles.button}>
             Iniciar Sesión
           </button>
-          {error && <p style={{color: 'yellow'}}>{error}</p>}
+          {error && <p style={{ color: 'yellow', marginTop: '10px', fontSize: '14px' }}>{error}</p>}
         </form>
         <Link to="/registro" className={styles.link}>
-          ¿No tienes cuenta?
+          ¿No tienes cuenta? Regístrate gratis
         </Link>
       </div>
     </div>
   );
 }
+
 export default LoginPage;

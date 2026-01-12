@@ -1,4 +1,3 @@
-// src/pages/RegisterPage.jsx
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
@@ -15,12 +14,39 @@ function RegisterPage() {
   const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
+
+    // --- NUEVAS VALIDACIONES DE FRONTEND ---
+    if (!nombre || !email || !password) {
+      setError('Por favor, rellena todos los campos.');
+      return;
+    }
+
+    if (password.length < 8) {
+      setError('La contraseña debe tener al menos 8 caracteres.');
+      return;
+    }
+
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      // Aquí podrías guardar el 'nombre' en Firestore si quisieras
-      navigate('/'); // Redirige al Home
+      // Aquí podrías guardar el 'nombre' en Firestore si quisieras mas adelante
+      navigate('/'); 
     } catch (err) {
-      setError('Error al crear la cuenta. Intenta de nuevo.');
+      // --- MANEJO DE ERRORES DE FIREBASE ---
+      console.error(err.code);
+      switch (err.code) {
+        case 'auth/email-already-in-use':
+          setError('Este correo ya está registrado.');
+          break;
+        case 'auth/invalid-email':
+          setError('El formato del correo no es válido.');
+          break;
+        case 'auth/weak-password':
+          setError('La contraseña es muy débil.');
+          break;
+        default:
+          setError('Error al crear la cuenta. Intenta de nuevo.');
+          break;
+      }
     }
   };
 
@@ -53,13 +79,14 @@ function RegisterPage() {
           <button type="submit" className={styles.button}>
             Registrarse
           </button>
-          {error && <p style={{color: 'yellow'}}>{error}</p>}
+          {error && <p style={{ color: 'yellow', marginTop: '10px', fontSize: '14px' }}>{error}</p>}
         </form>
         <Link to="/login" className={styles.link}>
-          ¿Ya tienes cuenta?
+          ¿Ya tienes cuenta? Inicia sesión aquí
         </Link>
       </div>
     </div>
   );
 }
+
 export default RegisterPage;

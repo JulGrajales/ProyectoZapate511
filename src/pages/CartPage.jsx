@@ -7,12 +7,14 @@ import { useNavigate } from 'react-router-dom';
 import styles from './CartPage.module.css';
 
 function CartPage() {
-  const { cart, clearCart } = useCart();
+  // Nota: Asegúrate de añadir updateQuantity y removeFromCart en tu CartContext
+  const { cart, clearCart, updateQuantity, removeFromCart } = useCart();
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
 
   const calcularTotal = () => {
-    return cart.reduce((total, item) => total + item.price, 0);
+    // Ahora multiplica el precio por la cantidad de cada item
+    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
 
   const handleApartar = async () => {
@@ -33,7 +35,8 @@ function CartPage() {
         email: user.email,
         items: cart,
         total: calcularTotal(),
-        fecha: new Date()
+        fecha: new Date(),
+        status: "pendiente"
       });
 
       clearCart();
@@ -56,16 +59,32 @@ function CartPage() {
           {cart.map(item => (
             <div key={item.id} className={styles.cartItem}>
               <img src={item.image} alt={item.name} />
-              <div>
+              <div className={styles.info}>
                 <h3>{item.name}</h3>
-                <p>Detalles: (Color, Talla, etc)</p>
+                <p>Talla: {item.tallaSelected}</p>
+                
+                {/* Selector de Cantidad */}
+                <div className={styles.quantityControls}>
+                  <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
+                  <span>{item.quantity}</span>
+                  <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+                </div>
+
+                <button 
+                  className={styles.deleteBtn} 
+                  onClick={() => removeFromCart(item.id)}
+                >
+                  Eliminar
+                </button>
               </div>
-              <strong>${item.price.toFixed(2)} MXN</strong>
+              <strong>${(item.price * item.quantity).toFixed(2)} MXN</strong>
             </div>
           ))}
 
-          <h2>Total: ${calcularTotal().toFixed(2)} MXN</h2>
-          <button onClick={handleApartar}>APARTAR</button>
+          <div className={styles.cartFooter}>
+            <h2>Total: ${calcularTotal().toFixed(2)} MXN</h2>
+            <button className={styles.apartarBtn} onClick={handleApartar}>APARTAR</button>
+          </div>
         </>
       )}
     </div>

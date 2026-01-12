@@ -32,10 +32,17 @@ function Header() {
             <nav className={styles.nav}> 
                 {user ? (
                     <>
-                        {/* 👉 NUEVO botón del historial */}
+                        {/* Enlace al historial de apartados */}
                         <Link to="/historial" className={styles.navLink}>Historial</Link>
 
+                        {/* Enlace al carrito de compras */}
                         <Link to="/carrito" className={styles.navLink}>Carrito</Link>
+
+                        {/* 👉 NUEVO: Enlace a la ventana de gestión de cuenta (Perfil) */}
+                        <Link to="/perfil" className={styles.navLink}>Mi Cuenta</Link>
+
+                        <Link to="/quejas" className={styles.navLink}>Quejas</Link>
+                        
                         <button onClick={handleLogout} className={styles.navButton}>Cerrar Sesión</button>
                     </>
                 ) : (
